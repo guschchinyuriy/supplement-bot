@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from database import search_supplements, search_by_ingredient, get_all_symptoms, get_symptom_card, log_search, init_db
 from seed_data import seed
+from affiliate import get_iherb_link
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +40,9 @@ def format_card(row: tuple) -> str:
     if sanctions_note:
         avail += f"\n⚠️ {sanctions_note}"
 
+    link = get_iherb_link(name)
+    buy_line = f"\n\n🛒 [Купить на iHerb]({link})" if link else ""
+
     return (
         f"{cat_emoji} *{name}*\n\n"
         f"📋 {description}\n\n"
@@ -46,6 +50,7 @@ def format_card(row: tuple) -> str:
         f"💡 *Польза:* {benefits}\n"
         f"📏 *Дозировка:* {dosage}\n\n"
         f"{avail}"
+        f"{buy_line}"
     )
 
 
