@@ -7,13 +7,21 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from dotenv import load_dotenv
 
-from database import search_supplements, search_by_ingredient, get_all_symptoms, get_symptom_card, log_search
+from database import search_supplements, search_by_ingredient, get_all_symptoms, get_symptom_card, log_search, init_db
+from seed_data import seed
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
+
+
+async def on_startup():
+    """Инициализация БД и данных при старте бота"""
+    init_db()
+    seed()
+    print("✅ База данных готова")
 
 
 # ─── Форматирование карточки добавки ────────────────────────────────────────
@@ -228,6 +236,7 @@ async def handle_search(message: types.Message):
 # ─── Запуск ───────────────────────────────────────────────────────────────────
 
 async def main():
+    await on_startup()
     print("✅ Бот запущен!")
     await dp.start_polling(bot)
 
